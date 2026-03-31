@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+import logging
+from typing import TYPE_CHECKING
 
 try:
     from fastapi import FastAPI, HTTPException
@@ -11,11 +13,20 @@ except Exception as exc:  # pragma: no cover
         "FastAPI support requires 'fastapi' and 'pydantic' to be installed."
     ) from exc
 
-from .service import HybridTicketSentimentAnalyzer
+logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from .service import HybridTicketSentimentAnalyzer
 
 
 class PredictRequest(BaseModel):
     text: str = Field(..., min_length=1, description="Ticket description")
+
+
+def _default_analyzer_factory() -> HybridTicketSentimentAnalyzer:
+    from .service import HybridTicketSentimentAnalyzer
+
+    return HybridTicketSentimentAnalyzer()
 
 
 def _browser_page() -> str:
@@ -305,14 +316,22 @@ def _browser_page() -> str:
 def create_app(
     analyzer_factory: Callable[[], HybridTicketSentimentAnalyzer] | None = None,
 ) -> FastAPI:
-    analyzer_factory = analyzer_factory or HybridTicketSentimentAnalyzer
+    analyzer_factory = analyzer_factory or _default_analyzer_factory
     analyzer: HybridTicketSentimentAnalyzer | None = None
+    analyzer_error: Exception | None = None
     app = FastAPI(title="Ticket Sentiment Analyzer", version="0.1.0")
 
     def get_analyzer() -> HybridTicketSentimentAnalyzer:
-        nonlocal analyzer
+        nonlocal analyzer, analyzer_error
         if analyzer is None:
-            analyzer = analyzer_factory()
+            if analyzer_error is not None:
+                raise RuntimeError("Ticket sentiment analyzer could not be initialized.") from analyzer_error
+            try:
+                analyzer = analyzer_factory()
+            except Exception as exc:
+                analyzer_error = exc
+                logger.exception("Failed to initialize ticket sentiment analyzer")
+                raise RuntimeError("Ticket sentiment analyzer could not be initialized.") from exc
         return analyzer
 
     @app.get("/", response_class=HTMLResponse)
@@ -330,6 +349,8 @@ def create_app(
             result = get_analyzer().predict(request.text)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except RuntimeError as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
         return result.as_dict()
 
     return app

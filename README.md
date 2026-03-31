@@ -29,7 +29,19 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+Package-based installs also work now:
+
+```bash
+pip install -e .[full]
+```
+
 If you want to run with fewer dependencies first, the code still has pure-Python fallbacks for lexicon scoring and token-overlap retrieval, but accuracy will be lower than the full stack.
+
+## Deploying to Vercel
+
+The Vercel entrypoint is `app.py`.
+
+If you deploy from Git, Vercel may read Python package metadata during the build, so the API runtime dependencies need to live in `[project.dependencies]` in `pyproject.toml` instead of only under an optional extra.
 
 ## Usage
 
@@ -106,4 +118,3 @@ set TICKET_SENTIMENT_OLLAMA_BASE_URL=http://localhost:11434
 Use your own ticket history.
 
 Even a few hundred carefully labeled historical tickets from your actual domain usually improve the RAG layer and final accuracy much more than swapping model names randomly.
-
