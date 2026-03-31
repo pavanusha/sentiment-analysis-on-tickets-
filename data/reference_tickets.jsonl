@@ -1,0 +1,54 @@
+{"id":"neg-001","label":"negative","text":"The application keeps crashing and this is really frustrating."}
+{"id":"neg-002","label":"negative","text":"Still cannot log in after the password reset, please fix this ASAP."}
+{"id":"neg-003","label":"negative","text":"Payment failed again and I am annoyed now."}
+{"id":"neg-004","label":"negative","text":"Your last update broke the export feature for our team."}
+{"id":"neg-005","label":"negative","text":"This bug is blocking my whole team and it is unacceptable."}
+{"id":"neg-006","label":"negative","text":"Why is the dashboard so slow today? It is painful to use."}
+{"id":"neg-007","label":"negative","text":"The mobile application froze twice, super irritating."}
+{"id":"neg-008","label":"negative","text":"Notifications are missing and I am upset because we missed alerts."}
+{"id":"neg-009","label":"negative","text":"Search is returning junk results, pretty bad experience."}
+{"id":"neg-010","label":"negative","text":"VPN connection drops every hour and this is getting ridiculous."}
+{"id":"neg-011","label":"negative","text":"I uploaded the file three times and it still errors out."}
+{"id":"neg-012","label":"negative","text":"This release made things worse for us."}
+{"id":"neg-013","label":"negative","text":"We are losing data after save, very worrying and frustrating."}
+{"id":"neg-014","label":"negative","text":"Printer integration is broken again, disappointed."}
+{"id":"neg-015","label":"negative","text":"I am tired of reopening this ticket, issue still not solved."}
+{"id":"neg-016","label":"negative","text":"pls fix this, the app is kinda busted rn and users are angry."}
+{"id":"neg-017","label":"negative","text":"idk why this keeps failing but it is seriously annoying."}
+{"id":"neg-018","label":"negative","text":"Server is down again and the team is mad about it."}
+{"id":"neu-001","label":"neutral","text":"Please reset access for the finance group."}
+{"id":"neu-002","label":"neutral","text":"Can you check why the nightly report did not arrive?"}
+{"id":"neu-003","label":"neutral","text":"Following up on ticket 2841 for an update."}
+{"id":"neu-004","label":"neutral","text":"Need help adding one more user to the workspace."}
+{"id":"neu-005","label":"neutral","text":"FYI the server restarted at 02:10 UTC."}
+{"id":"neu-006","label":"neutral","text":"Customer asked whether SSO is supported."}
+{"id":"neu-007","label":"neutral","text":"Sharing logs from the failed sync attempt."}
+{"id":"neu-008","label":"neutral","text":"Requesting a status update on the migration task."}
+{"id":"neu-009","label":"neutral","text":"The page shows a 500 error when saving settings."}
+{"id":"neu-010","label":"neutral","text":"Could you confirm if the patch was deployed?"}
+{"id":"neu-011","label":"neutral","text":"Ticket reopened because validation still fails on one field."}
+{"id":"neu-012","label":"neutral","text":"User cannot see reports after role change."}
+{"id":"neu-013","label":"neutral","text":"Need docs for API rate limits."}
+{"id":"neu-014","label":"neutral","text":"Please review the attached screenshot and advise."}
+{"id":"neu-015","label":"neutral","text":"Import job stopped after 1200 rows, logs attached."}
+{"id":"neu-016","label":"neutral","text":"hey team, can u check this login issue when you get a chance?"}
+{"id":"neu-017","label":"neutral","text":"Need clarification on whether the sync job should retry automatically."}
+{"id":"neu-018","label":"neutral","text":"Please share the current ETA for the role update request."}
+{"id":"pos-001","label":"positive","text":"Thanks, the fix worked perfectly."}
+{"id":"pos-002","label":"positive","text":"Really appreciate the quick turnaround here."}
+{"id":"pos-003","label":"positive","text":"Great job, log in is working smoothly now."}
+{"id":"pos-004","label":"positive","text":"The new dashboard looks awesome and feels faster."}
+{"id":"pos-005","label":"positive","text":"Issue resolved, everything is good now."}
+{"id":"pos-006","label":"positive","text":"Nice work team, alerts are coming through again."}
+{"id":"pos-007","label":"positive","text":"Love the cleanup in the latest release."}
+{"id":"pos-008","label":"positive","text":"Support was super helpful, thank you."}
+{"id":"pos-009","label":"positive","text":"All set now, problem is fixed on our side."}
+{"id":"pos-010","label":"positive","text":"The export patch worked great."}
+{"id":"pos-011","label":"positive","text":"Happy to confirm the mobile sync is stable now."}
+{"id":"pos-012","label":"positive","text":"This is much better after the update."}
+{"id":"pos-013","label":"positive","text":"Awesome, the account was restored quickly."}
+{"id":"pos-014","label":"positive","text":"Big thanks for sorting this out today."}
+{"id":"pos-015","label":"positive","text":"Looks good to me, no more errors."}
+{"id":"pos-016","label":"positive","text":"thx, works now and the team is happy."}
+{"id":"pos-017","label":"positive","text":"You guys fixed it, nice one."}
+{"id":"pos-018","label":"positive","text":"App is smooth again, appreciate the fast help."}

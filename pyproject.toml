@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ticket-sentiment-rag"
+version = "0.1.0"
+description = "Hybrid ticket sentiment analysis with rules, retrieval, NLP models, and optional LLM arbitration."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+full = [
+  "fastapi>=0.115.0",
+  "numpy>=2.1.0",
+  "openai>=1.68.0",
+  "sentence-transformers>=3.4.1",
+  "scikit-learn>=1.6.0",
+  "torch>=2.5.0",
+  "transformers>=4.48.0",
+  "uvicorn>=0.34.0",
+  "vaderSentiment>=3.3.2",
+]
+
+[project.scripts]
+ticket-sentiment = "ticket_sentiment.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["ticket_sentiment*"]
