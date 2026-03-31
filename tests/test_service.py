@@ -134,6 +134,42 @@ class ServiceTests(unittest.TestCase):
         result = analyzer.predict("This is much better after the update.")
         self.assertEqual(result.label, "positive")
 
+    def test_slow_and_frustrating_ticket_is_negative(self) -> None:
+        analyzer = HybridTicketSentimentAnalyzer(
+            settings=self.local_settings,
+            llm_judge=FakeLLM(None, available=False),
+        )
+
+        result = analyzer.predict("The dashboard is slow and frustrating for the team.")
+        self.assertEqual(result.label, "negative")
+
+    def test_positive_resolution_overrides_error_wording(self) -> None:
+        analyzer = HybridTicketSentimentAnalyzer(
+            settings=self.local_settings,
+            llm_judge=FakeLLM(None, available=False),
+        )
+
+        result = analyzer.predict("Looks good to me, no more errors.")
+        self.assertEqual(result.label, "positive")
+
+    def test_exact_neutral_request_stays_neutral(self) -> None:
+        analyzer = HybridTicketSentimentAnalyzer(
+            settings=self.local_settings,
+            llm_judge=FakeLLM(None, available=False),
+        )
+
+        result = analyzer.predict("Need help adding one more user to the workspace.")
+        self.assertEqual(result.label, "neutral")
+
+    def test_exact_neutral_confirmation_stays_neutral(self) -> None:
+        analyzer = HybridTicketSentimentAnalyzer(
+            settings=self.local_settings,
+            llm_judge=FakeLLM(None, available=False),
+        )
+
+        result = analyzer.predict("Could you confirm if the patch was deployed?")
+        self.assertEqual(result.label, "neutral")
+
 
 if __name__ == "__main__":
     unittest.main()

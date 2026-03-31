@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .preprocessing import normalize_text, tokenize
-from .scoring import clamp, score_to_label
+from .scoring import clamp, label_to_score, score_to_label
 from .types import RetrievedExample, Signal, SentimentLabel
 
 try:
@@ -178,12 +178,35 @@ class ReferenceTicketStore:
         weights = {"negative": 0.0, "neutral": 0.0, "positive": 0.0}
         top_similarity = 0.0
         weighted_similarity_sum = 0.0
+        top_example: RetrievedExample | None = None
 
         for example in retrieved_examples:
             similarity = max(example.similarity, 0.01)
             weights[example.label] += similarity
-            top_similarity = max(top_similarity, example.similarity)
+            if example.similarity >= top_similarity:
+                top_similarity = example.similarity
+                top_example = example
             weighted_similarity_sum += similarity
+
+        if top_example is not None and top_similarity >= 0.92:
+            confidence = clamp(0.52 + (0.34 * top_similarity), 0.0, 0.97)
+            score = (
+                0.0
+                if top_example.label == "neutral"
+                else label_to_score(top_example.label, max(0.45, confidence))
+            )
+            return Signal(
+                source="rag",
+                label=top_example.label,
+                confidence=confidence,
+                score=score,
+                details={
+                    "backend": self.backend,
+                    "mode": "top-match",
+                    "top_similarity": top_similarity,
+                    "votes": weights,
+                },
+            )
 
         total = sum(weights.values()) or 1.0
         score = (weights["positive"] - weights["negative"]) / total

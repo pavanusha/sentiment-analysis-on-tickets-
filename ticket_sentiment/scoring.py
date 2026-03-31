@@ -56,16 +56,23 @@ def aggregate_signals(
         strongest_signal_confidence = max(strongest_signal_confidence, signal.confidence)
         polarity = clamp_signed(signal.score)
         weight = base_weight * signal_strength
-        label_bonus = 0.15
 
         if _is_weak_neutral_signal(signal):
             weight *= 0.15
-            label_bonus = 0.0
 
-        contributions["positive"] += weight * max(0.0, polarity)
-        contributions["negative"] += weight * max(0.0, -polarity)
-        contributions["neutral"] += weight * max(0.0, 1.0 - abs(polarity))
-        contributions[signal.label] += weight * label_bonus
+        polarity_strength = abs(polarity)
+        resolved_strength = max(0.28, polarity_strength)
+
+        if signal.label == "positive":
+            contributions["positive"] += weight * (0.65 + (0.35 * resolved_strength))
+        elif signal.label == "negative":
+            contributions["negative"] += weight * (0.65 + (0.35 * resolved_strength))
+        else:
+            contributions["neutral"] += weight * (0.7 + (0.3 * max(0.0, 1.0 - polarity_strength)))
+
+        residual_uncertainty = max(0.0, 0.45 - polarity_strength) / 0.45 if polarity_strength < 0.45 else 0.0
+        if signal.label != "neutral":
+            contributions["neutral"] += weight * 0.12 * residual_uncertainty
 
     total = sum(contributions.values()) or 1.0
     ordered = sorted(contributions.items(), key=lambda item: item[1], reverse=True)
@@ -75,9 +82,9 @@ def aggregate_signals(
     dominance = top_score / total
     margin = (top_score - second_score) / total
     confidence = clamp(
-        0.35 + (0.35 * dominance) + (0.35 * margin) + (0.1 * strongest_signal_confidence),
+        0.3 + (0.24 * dominance) + (0.18 * margin) + (0.18 * strongest_signal_confidence),
         0.0,
-        0.99,
+        0.96,
     )
 
     return {
