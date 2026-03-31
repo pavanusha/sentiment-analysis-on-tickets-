@@ -170,6 +170,39 @@ class ServiceTests(unittest.TestCase):
         result = analyzer.predict("Could you confirm if the patch was deployed?")
         self.assertEqual(result.label, "neutral")
 
+    def test_clear_resolution_text_is_positive_even_if_retrieval_is_negative(self) -> None:
+        analyzer = HybridTicketSentimentAnalyzer(
+            settings=self.local_settings,
+            retriever=FakeRetriever("negative", -0.85),
+            transformer=FakeModel(None),
+            vader=FakeModel(None),
+            llm_judge=FakeLLM(None, available=False),
+        )
+
+        result = analyzer.predict("Please close this ticket, it is resolved now.")
+        self.assertEqual(result.label, "positive")
+
+    def test_not_resolved_text_does_not_trigger_resolution_rule(self) -> None:
+        analyzer = HybridTicketSentimentAnalyzer(
+            settings=self.local_settings,
+            retriever=FakeRetriever("negative", -0.85),
+            transformer=FakeModel(None),
+            vader=FakeModel(None),
+            llm_judge=FakeLLM(None, available=False),
+        )
+
+        result = analyzer.predict("Please do not close this ticket, it is not resolved.")
+        self.assertEqual(result.label, "negative")
+
+    def test_still_not_solved_text_stays_negative(self) -> None:
+        analyzer = HybridTicketSentimentAnalyzer(
+            settings=self.local_settings,
+            llm_judge=FakeLLM(None, available=False),
+        )
+
+        result = analyzer.predict("I am tired of reopening this ticket, issue still not solved.")
+        self.assertEqual(result.label, "negative")
+
 
 if __name__ == "__main__":
     unittest.main()

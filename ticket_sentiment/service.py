@@ -9,6 +9,50 @@ from .retrieval import ReferenceTicketStore
 from .scoring import aggregate_signals
 from .types import PredictionResult, RetrievedExample, Signal
 
+POSITIVE_RESOLUTION_PHRASES = {
+    "resolved",
+    "issue resolved",
+    "problem solved",
+    "solved",
+    "fixed",
+    "issue fixed",
+    "working now",
+    "works now",
+    "now working",
+    "restored",
+    "back online",
+    "back up",
+    "no more errors",
+    "all good now",
+    "all set now",
+    "good now",
+    "gone now",
+    "can close this",
+    "close this ticket",
+    "please close this",
+    "please close the ticket",
+}
+
+RESOLUTION_BLOCKERS = {
+    "not resolved",
+    "issue not resolved",
+    "not solved",
+    "still not solved",
+    "problem not solved",
+    "not fixed",
+    "still not working",
+    "still broken",
+    "still failing",
+    "issue persists",
+    "problem persists",
+    "still seeing",
+    "still getting",
+    "reopening",
+    "reopened",
+    "re opened",
+    "unresolved",
+}
+
 
 class HybridTicketSentimentAnalyzer:
     def __init__(
@@ -55,6 +99,10 @@ class HybridTicketSentimentAnalyzer:
             lexicon_signal(normalized_text, original_text=text),
             self.retriever.build_signal(retrieved_examples),
         ]
+
+        resolution_signal = self._resolution_positive_signal(normalized_text)
+        if resolution_signal is not None:
+            signals.append(resolution_signal)
 
         transformer_signal = self.transformer.predict(text)
         if transformer_signal is not None:
@@ -121,6 +169,27 @@ class HybridTicketSentimentAnalyzer:
         margin = float(aggregate["margin"])
         confidence = float(aggregate["confidence"])
         return margin < self.settings.llm_margin_threshold or (mixed_signals and has_contrast) or confidence < 0.6
+
+    def _resolution_positive_signal(self, normalized_text: str) -> Signal | None:
+        if any(phrase in normalized_text for phrase in RESOLUTION_BLOCKERS):
+            return None
+
+        matches = [
+            phrase
+            for phrase in sorted(POSITIVE_RESOLUTION_PHRASES, key=len, reverse=True)
+            if phrase in normalized_text
+        ]
+        if not matches:
+            return None
+
+        confidence = min(0.95, 0.78 + (0.03 * min(len(matches), 4)))
+        return Signal(
+            source="resolution_rule",
+            label="positive",
+            confidence=confidence,
+            score=confidence,
+            details={"matches": matches[:5]},
+        )
 
     def _build_rationale(
         self,

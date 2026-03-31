@@ -8,6 +8,7 @@ from .types import SentimentLabel, Signal
 DEFAULT_SOURCE_WEIGHTS: dict[str, float] = {
     "lexicon": 0.18,
     "rag": 0.26,
+    "resolution_rule": 0.42,
     "transformer": 0.38,
     "vader": 0.12,
     "llm": 0.45,
